@@ -5,6 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Frame your picture"
+        style="@style/Crop.TitleBar"/>
+
     <include
         android:id="@+id/done_cancel_bar"
         layout="@layout/crop__layout_done_cancel" />

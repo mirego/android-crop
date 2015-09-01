@@ -28,8 +28,10 @@ import android.opengl.GLES10;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +50,7 @@ public class CropImageActivity extends MonitoredActivity {
 
     private int aspectX;
     private int aspectY;
+    private String title;
 
     // Output image
     private int maxX;
@@ -63,6 +66,7 @@ public class CropImageActivity extends MonitoredActivity {
     private RotateBitmap rotateBitmap;
     private CropImageView imageView;
     private HighlightView cropView;
+    private TextView titleView;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -102,6 +106,8 @@ public class CropImageActivity extends MonitoredActivity {
                 onSaveClicked();
             }
         });
+
+        titleView = (TextView) findViewById(R.id.title_bar);
     }
 
     private void setupFromIntent() {
@@ -114,6 +120,7 @@ public class CropImageActivity extends MonitoredActivity {
             maxX = extras.getInt(Crop.Extra.MAX_X);
             maxY = extras.getInt(Crop.Extra.MAX_Y);
             saveUri = extras.getParcelable(MediaStore.EXTRA_OUTPUT);
+            title = extras.getString(Crop.Extra.TITLE);
         }
 
         sourceUri = intent.getData();
@@ -136,6 +143,12 @@ public class CropImageActivity extends MonitoredActivity {
             } finally {
                 CropUtil.closeSilently(is);
             }
+        }
+
+        if (TextUtils.isEmpty(title)) {
+            titleView.setVisibility(View.GONE);
+        } else {
+            titleView.setText(title);
         }
     }
 
@@ -215,18 +228,12 @@ public class CropImageActivity extends MonitoredActivity {
 
             Rect imageRect = new Rect(0, 0, width, height);
 
-            // Make the default size about 4/5 of the width or height
-            int cropWidth = Math.min(width, height) * 4 / 5;
-            @SuppressWarnings("SuspiciousNameCombination")
-            int cropHeight = cropWidth;
+            int cropWidth = width;
+            int cropHeight = height;
 
-            if (aspectX != 0 && aspectY != 0) {
-                if (aspectX > aspectY) {
-                    cropHeight = cropWidth * aspectY / aspectX;
-                } else {
-                    cropWidth = cropHeight * aspectX / aspectY;
-                }
-            }
+            CropZoneOptimizer cropZoneOptimizer = new CropZoneOptimizer(width, height, cropWidth, cropHeight).optimize();
+            cropWidth = cropZoneOptimizer.getCropWidth();
+            cropHeight = cropZoneOptimizer.getCropHeight();
 
             int x = (width - cropWidth) / 2;
             int y = (height - cropHeight) / 2;
@@ -247,6 +254,50 @@ public class CropImageActivity extends MonitoredActivity {
                     }
                 }
             });
+        }
+
+        private class CropZoneOptimizer {
+            private int width;
+            private int height;
+            private int cropWidth;
+            private int cropHeight;
+
+            public CropZoneOptimizer(int width, int height, int cropWidth, int cropHeight) {
+                this.width = width;
+                this.height = height;
+                this.cropWidth = cropWidth;
+                this.cropHeight = cropHeight;
+            }
+
+            public int getCropWidth() {
+                return cropWidth;
+            }
+
+            public int getCropHeight() {
+                return cropHeight;
+            }
+
+            public CropZoneOptimizer optimize() {
+                if (aspectX != 0 && aspectY != 0) {
+                    if (aspectX > aspectY) {
+                        if (width / (float) height <= aspectX / (float) aspectY) {
+                            cropHeight = cropWidth * aspectY / aspectX;
+                        } else {
+                            cropWidth = cropHeight * aspectX / aspectY;
+                        }
+                    } else {
+                        if (width / (float) height <= aspectX / (float) aspectY) {
+                            cropHeight = cropWidth * aspectY / aspectX;
+                        } else {
+                            cropWidth = cropHeight * aspectX / aspectY;
+                        }
+                    }
+                } else {
+                    cropWidth = Math.min(width, height);
+                    cropHeight = cropWidth;
+                }
+                return this;
+            }
         }
     }
 

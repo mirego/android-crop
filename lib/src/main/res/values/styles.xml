@@ -5,6 +5,7 @@
     <style name="Crop.DoneCancelBar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/crop__bar_height</item>
+        <item name="android:layout_below">@id/title_bar</item>
         <item name="android:orientation">horizontal</item>
         <item name="android:divider">@drawable/crop__divider</item>
         <item name="android:showDividers" tools:ignore="NewApi">middle</item>
@@ -39,6 +40,15 @@
     <style name="Crop.ActionButtonText.Cancel">
         <item name="android:drawableLeft">@drawable/crop__ic_cancel</item>
         <item name="android:text">@string/crop__cancel</item>
+    </style>
+
+    <style name="Crop.TitleBar">
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:background">@color/crop__button_bar</item>
+        <item name="android:textColor">@color/crop__button_text</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">13sp</item>
     </style>
 
 </resources>

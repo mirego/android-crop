@@ -145,11 +145,11 @@ public class CropImageView extends ImageViewTouchBase {
     private void ensureVisible(HighlightView hv) {
         Rect r = hv.drawRect;
 
-        int panDeltaX1 = Math.max(0, getLeft() - r.left);
-        int panDeltaX2 = Math.min(0, getRight() - r.right);
+        int panDeltaX1 = Math.max(0, 0 - r.left);
+        int panDeltaX2 = Math.min(0, getWidth() - r.right);
 
-        int panDeltaY1 = Math.max(0, getTop() - r.top);
-        int panDeltaY2 = Math.min(0, getBottom() - r.bottom);
+        int panDeltaY1 = Math.max(0, 0 - r.top);
+        int panDeltaY2 = Math.min(0, getHeight() - r.bottom);
 
         int panDeltaX = panDeltaX1 != 0 ? panDeltaX1 : panDeltaX2;
         int panDeltaY = panDeltaY1 != 0 ? panDeltaY1 : panDeltaY2;
