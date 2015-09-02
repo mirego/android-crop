@@ -261,6 +261,7 @@ public class CropImageActivity extends MonitoredActivity {
             private int height;
             private int cropWidth;
             private int cropHeight;
+            private static final float SCALE_FACTOR = 0.9;
 
             public CropZoneOptimizer(int width, int height, int cropWidth, int cropHeight) {
                 this.width = width;
@@ -270,11 +271,11 @@ public class CropImageActivity extends MonitoredActivity {
             }
 
             public int getCropWidth() {
-                return cropWidth;
+                return (int)(cropWidth * SCALE_FACTOR);
             }
 
             public int getCropHeight() {
-                return cropHeight;
+                return (int)(cropHeight * SCALE_FACTOR);
             }
 
             public CropZoneOptimizer optimize() {
