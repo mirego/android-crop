@@ -1,7 +1,8 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 apply plugin: 'signing'
-//apply from: '../.publishing/sonatype.gradle'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
 archivesBaseName = 'android-crop'
 
@@ -28,3 +29,10 @@ dependencies {
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
 }
 
+bintray {
+    pkg {
+        repo = 'webid-grrr'
+        name = 'android-crop'
+    }
+    configurations = ['archives']
+}
