@@ -1,1 +1,2 @@
 include ':lib', ':example'
+project(':lib').name = 'android-crop'
