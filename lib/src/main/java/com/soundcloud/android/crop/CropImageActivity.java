@@ -34,6 +34,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -128,7 +129,13 @@ public class CropImageActivity extends MonitoredActivity {
 
         sourceUri = intent.getData();
         if (sourceUri != null) {
-            Pair<Integer,Integer> exifRotationTrans = CropUtil.getExifRotationTranslation(CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri));
+            Pair<Integer,Integer> exifRotationTrans;
+            File imageFile = CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri);
+            if (imageFile != null) {
+                exifRotationTrans = CropUtil.getExifRotationTranslation(imageFile);
+            } else {
+                exifRotationTrans = CropUtil.getExifRotationTranslation(sourceUri, getContentResolver());
+            }
             exifRotation = exifRotationTrans.first;
             exifScale = exifRotationTrans.second;
 
