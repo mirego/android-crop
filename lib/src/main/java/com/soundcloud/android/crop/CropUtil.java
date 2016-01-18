@@ -80,8 +80,12 @@ class CropUtil {
             inputStream = contentResolver.openInputStream(imageUri);
             Metadata metadata = ImageMetadataReader.readMetadata(inputStream);
             ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-            int orientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
-            return getExifRotationTranslationFromOrientation(orientation);
+
+            if (directory != null) {
+                 exifRotation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+            }
+
+            return getExifRotationTranslationFromOrientation(exifRotation);
         } catch (IOException | ImageProcessingException | MetadataException e) {
             Log.e("Error getting Exif data", e);
         } finally {
