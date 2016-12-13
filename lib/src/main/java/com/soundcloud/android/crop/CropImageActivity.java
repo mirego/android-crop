@@ -146,19 +146,25 @@ public class CropImageActivity extends MonitoredActivity {
                 BitmapFactory.Options option = new BitmapFactory.Options();
                 option.inSampleSize = sampleSize;
                 initialBitmap = BitmapFactory.decodeStream(is, null, option);
-                int drawHeight = initialBitmap.getHeight();
-                int drawWidth = initialBitmap.getWidth();
-                if ((exifRotation != 0) || (exifScale != 1)) {
-                    Matrix matrix = new Matrix() ;
-                    if (exifRotation != 0) {
-                        matrix.preRotate(exifRotation);
+
+                if (initialBitmap != null) {
+                    int drawHeight = initialBitmap.getHeight();
+                    int drawWidth = initialBitmap.getWidth();
+                    if ((exifRotation != 0) || (exifScale != 1)) {
+                        Matrix matrix = new Matrix();
+                        if (exifRotation != 0) {
+                            matrix.preRotate(exifRotation);
+                        }
+                        if (exifScale != 1) {
+                            matrix.postScale(exifScale, 1);
+                        }
+                        srcBitmap = Bitmap.createBitmap(initialBitmap, 0, 0, drawWidth, drawHeight, matrix, true);
+                    } else {
+                        srcBitmap = initialBitmap;
                     }
-                    if (exifScale != 1) {
-                        matrix.postScale(exifScale, 1);
-                    }
-                    srcBitmap = Bitmap.createBitmap(initialBitmap, 0, 0, drawWidth, drawHeight, matrix, true);
                 } else {
-                    srcBitmap = initialBitmap ;
+                    Log.e("Error reading image");
+                    setResultException(new NullPointerException());
                 }
             } catch (IOException e) {
                 Log.e("Error reading image: " + e.getMessage(), e);
